@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Englishkola - Alice's Listening Studio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FAF7F2',
+                        mintCard: '#E6F8F5',
+                        brandTeal: '#2DD4BF',
+                        brandDark: '#2D3748',
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                        hand: ['Caveat', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-cream text-brandDark font-sans min-h-screen flex flex-col justify-between selection:bg-brandTeal selection:text-white">
+
+    <!-- Top Header Navigation -->
+    <header class="bg-white/85 backdrop-blur-md border-b border-emerald-100 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="showLandingPage()">
+                <img src="cake.jpg" alt="Logo" class="w-16 h-16 object-cover rounded-full border border-emerald-200 mix-blend-multiply" onerror="this.style.display='none'">
+                <span class="text-5xl font-hand font-bold text-brandTeal tracking-wide">Englishkola</span>
+                <span class="text-xs uppercase tracking-widest bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full">Alice's Listening Studio</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow w-full flex flex-col items-center justify-center">
+        
+        <!-- ================= LANDING PAGE VIEW ================= -->
+        <div id="landingView" class="relative flex min-h-[80vh] w-full flex-col items-center justify-center overflow-hidden px-6 py-8">
+            <article class="relative z-10 flex w-full max-w-md flex-col items-center text-center">
+                
+                <!-- Central Logo Graphic Enlarged -->
+                <div class="relative flex items-center justify-center aspect-square w-48 sm:w-56 mb-4">
+                    <img src="cake.jpg" alt="Podcast Cake Logo" class="object-cover w-full h-full rounded-3xl shadow-md border-2 border-emerald-100 mix-blend-multiply" onerror="this.parentElement.innerHTML='<div class=\'text-6xl\'>🎧</div>'">
+                </div>
+
+                <!-- Brand name -->
+                <h1
+                    class="mt-1 font-display text-4xl font-bold leading-[0.95] tracking-tight text-balance md:text-5xl"
+                    style="color: #2DD4BF; text-shadow: 2px 2px 0 #1F8E7C"
+                >
+                    Englishkola
+                </h1>
+
+                <!-- Tagline -->
+                <p class="mt-1.5 font-display text-sm font-medium text-emerald-800 md:text-base">Master English through Immersive Stories & Interactive Practice</p>
+
+                <!-- Editable app title under the tagline -->
+                <p class="mt-1.5 font-display text-2xl font-bold tracking-tight text-brandDark text-balance md:text-3xl">
+                    Alice's Listening Studio
+                </p>
+
+                <!-- Intro text box -->
+                <div class="mt-3 w-full rounded-2xl border border-emerald-200 bg-white/80 px-5 py-4 backdrop-blur-sm shadow-sm">
+                    <p class="text-pretty text-sm leading-relaxed text-gray-600">
+                        Welcome! Listen to real-life everyday conversations and true stories, test your comprehension with interactive quizzes, practice vocabulary flashcards, and transform transcripts into live gap-filling tests.
+                    </p>
+                </div>
+
+                <!-- CTA Button -->
+                <button
+                    onclick="enterStudio()"
+                    class="mt-6 h-12 w-full rounded-full px-9 text-base font-semibold bg-brandTeal hover:bg-teal-500 text-white shadow-[0_8px_24px_rgba(23,168,148,0.35)] transition-transform hover:-translate-y-0.5 flex items-center justify-center gap-2 text-lg"
+                >
+                    <span>Open Studio</span>
+                    <span>🎧</span>
+                </button>
+            </article>
+        </div>
+
+        <!-- ================= STUDIO VIEW ================= -->
+        <div id="studioView" class="hidden max-w-5xl mx-auto px-6 py-8 w-full space-y-8">
+            <div class="bg-mintCard border border-emerald-200/60 rounded-3xl p-8 shadow-sm flex items-center gap-6">
+                <img src="cake.jpg" alt="Logo" class="w-28 h-28 object-cover rounded-2xl shadow-sm border border-emerald-200 mix-blend-multiply hidden sm:block" onerror="this.style.display='none'">
+                <div>
+                    <h1 class="text-3xl sm:text-4xl font-bold text-brandDark mb-3">🎧 Alice's Interactive Listening Studio</h1>
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        Listen to the audio track carefully, then answer Alice's comprehension questions one by one, study your flashcards and test your vocabulary directly on the transcript text!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Track Selector Pills -->
+            <div class="flex flex-wrap gap-3" id="trackSelectorContainer"></div>
+
+            <!-- Active Track Workspace -->
+            <div id="trackWorkspace" class="bg-white rounded-3xl p-8 shadow-sm border border-emerald-100 space-y-8"></div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-emerald-100 py-6 text-center text-gray-500 text-lg mt-12">
+        <p>Englishkola Listening Suite - Developed by Barbara Láng-Szabó for effective language acquisition</p>
+    </footer>
+
+    <!-- Application Script -->
+    <script>
+        const tracks = [
+            {
+                id: 1,
+                title: "Track 1: My Morning",
+                // Using a reliable public sample audio stream that plays instantly for any user without setup
+                audioUrl: "https://actions.google.com/sounds/v1/ambiences/morning_birds.ogg",
+                subtitle: "Everyday Conversations — A2/B1[cite: 4]",
+                questions: [
+                    { q: "1. Why does Alice want to get up early?", options: ["A) To go to the gym", "B) Because she has loads to do", "C) To meet friends", "D) To catch a flight"], answer: "B" },
+                    { q: "2. What does Alice want to grab during her walk?", options: ["A) Fruit juice", "B) Coffee or tea and a pastry", "C) A sandwich", "D) A newspaper"], answer: "B" },
+                    { q: "3. What task does Alice plan to do before starting work?", options: ["A) Clean the kitchen", "B) Answer a few emails", "C) Make phone calls", "D) Read a book"], answer: "B" },
+                    { q: "4. What is expressed as uncertain by Alice?", options: ["A) Whether she will actually manage to get up early", "B) If the coffee shop is open", "C) If it will rain", "D) What time work starts"], answer: "A" },
+                    { q: "5. How does Alice end the conversation?", options: ["A) Saying goodbye", "B) Asking what the other person is up to today", "C) Asking for the time", "D) Asking about dinner"], answer: "B" }
+                ],
+                transcript: "I'm going to try and get up a bit early tomorrow because I've got loads to do. I want to go for a quick walk, grab a coffee or a tea, a pastry and answer a few emails before I start work. Whether I'll actually manage it is another question, but yeah. So, what are you up to today?",
+                keyTerms: [
+                    { word: "early", definition: "Before the usual time." },
+                    { word: "loads to do", definition: "A lot of tasks." },
+                    { word: "quick walk", definition: "A short stroll." },
+                    { word: "grab", definition: "To get quickly." },
+                    { word: "pastry", definition: "Sweet baked snack." },
+                    { word: "emails", definition: "Digital messages." },
+                    { word: "start work", definition: "Begin daily employment." },
+                    { word: "manage", definition: "Succeed in doing." },
+                    { word: "question", definition: "A matter of doubt." },
+                    { word: "up to", definition: "Planning to do." }
+                ],
+                flashcards: [
+                    { front: "Early", back: "Before expected time." },
+                    { front: "Loads to do", back: "A lot of tasks." },
+                    { front: "Quick walk", back: "A short stroll." },
+                    { front: "Grab", back: "Get quickly." },
+                    { front: "Pastry", back: "Baked sweet dough." },
+                    { front: "Emails", back: "Digital messages." },
+                    { front: "Start work", back: "Begin employment duties." },
+                    { front: "Manage", back: "Succeed in completing." },
+                    { front: "Question", back: "An inquiry or doubt." },
+                    { front: "Up to", back: "Engaged in doing." }
+                ]
+            },
+            {
+                id: 2,
+                title: "Track 2: Fish 'n' Chips",
+                audioUrl: "https://actions.google.com/sounds/v1/ambiences/restaurant_interior.ogg",
+                subtitle: "Everyday Conversations — B1/B2[cite: 5]",
+                questions: [
+                    { q: "1. What food has Alice not had in ages?", options: ["A) Pizza", "B) Fish and chips", "C) Burgers", "D) Chinese takeaway"], answer: "B" },
+                    { q: "2. Where is the good chip shop located according to Alice?", options: ["A) Near her parents' place", "B) In downtown London", "C) Next to her office", "D) By the train station"], answer: "A" },
+                    { q: "3. What condiments does Alice mention as essential?", options: ["A) Ketchup and mayo", "B) Salt and vinegar", "C) Mustard and pepper", "D) Hot sauce"], answer: "B" },
+                    { q: "4. Which optional sides does Alice suggest?", options: ["A) Salad or fries", "B) Curry sauce or mushy peas", "C) Baked beans or coleslaw", "D) Rice or noodles"], answer: "B" },
+                    { q: "5. How does Alice feel about eating them without the proper sides?", options: ["A) It tastes fine", "B) It doesn't taste right at all", "C) It is healthier", "D) It doesn't matter"], answer: "B" }
+                ],
+                transcript: "I haven't had fish and chips in ages, and I can't wait to go home to grab some. There's a little place near my parents actually that does really good ones. You've got to add salt and vinegar though, maybe even curry sauce or mushy peas. I don't think it tastes right without them, not at all.",
+                keyTerms: [
+                    { word: "fish and chips", definition: "Traditional fried meal." },
+                    { word: "in ages", definition: "For a very long time." },
+                    { word: "go home", definition: "Return to residence." },
+                    { word: "parents", definition: "Mother and father." },
+                    { word: "salt", definition: "Seasoning mineral." },
+                    { word: "vinegar", definition: "Sour condiment." },
+                    { word: "curry sauce", definition: "Spiced chip sauce." },
+                    { word: "mushy peas", definition: "Mashed green peas." },
+                    { word: "tastes right", definition: "Correct flavor." },
+                    { word: "not at all", definition: "Emphatic negation." }
+                ],
+                flashcards: [
+                    { front: "Fish and chips", back: "Classic fried meal." },
+                    { front: "In ages", back: "For a long time." },
+                    { front: "Go home", back: "Return to family." },
+                    { front: "Parents", back: "Mother and father." },
+                    { front: "Salt", back: "Seasoning." },
+                    { front: "Vinegar", back: "Sour condiment." },
+                    { front: "Curry sauce", back: "Spiced sauce." },
+                    { front: "Mushy peas", back: "Traditional green peas." },
+                    { front: "Tastes right", back: "Correct flavor." },
+                    { front: "Not at all", back: "Complete negation." }
+                ]
+            },
+            {
+                id: 3,
+                title: "Track 3: A Change of Plan",
+                audioUrl: "https://actions.google.com/sounds/v1/weather/rain_heavy.ogg",
+                subtitle: "Everyday Conversations — B2[cite: 6]",
+                questions: [
+                    { q: "1. What was Alice originally going to do after work?", options: ["A) Go to the gym", "B) Meet a friend", "C) Attend a meeting", "D) Go shopping"], answer: "B" },
+                    { q: "2. What happened to Alice's plan?", options: ["A) It was delayed", "B) The friend had to cancel", "C) She lost her keys", "D) It started raining"], answer: "B" },
+                    { q: "3. How does Alice feel about the cancellation?", options: ["A) Angry", "B) Relieved and shattered", "C) Sad", "D) Surprised"], answer: "B" },
+                    { q: "4. What is Alice's new evening plan?", options: ["A) Go to bed early", "B) Stay in, order food, and watch a film", "C) Clean the house", "D) Work late"], answer: "B" },
+                    { q: "5. What does Alice ask the listener at the end?", options: ["A) If they want to join", "B) If that is a good idea", "C) What time it is", "D) For food recommendations"], answer: "B" }
+                ],
+                transcript: "I was going to meet a friend after work today, but she's had to cancel. To be honest, I'm kind of relieved because I'm absolutely exhausted, absolutely shattered. I think I'll just stay in, order something to eat and watch a film. What do you think? Is that a good idea?",
+                keyTerms: [
+                    { word: "friend", definition: "Companion." },
+                    { word: "after work", definition: "Post-employment time." },
+                    { word: "cancel", definition: "Call off an event." },
+                    { word: "to be honest", definition: "Frankly speaking." },
+                    { word: "relieved", definition: "Free from worry." },
+                    { word: "exhausted", definition: "Very tired." },
+                    { word: "shattered", definition: "Completely wiped out." },
+                    { word: "stay in", definition: "Remain indoors." },
+                    { word: "watch a film", definition: "View a movie." },
+                    { word: "good idea", definition: "Sensible thought." }
+                ],
+                flashcards: [
+                    { front: "Friend", back: "Companion." },
+                    { front: "After work", back: "Post-work hours." },
+                    { front: "Cancel", back: "Call off." },
+                    { front: "To be honest", back: "Frankly speaking." },
+                    { front: "Relieved", back: "Glad it ended." },
+                    { front: "Exhausted", back: "Extremely tired." },
+                    { front: "Shattered", back: "Completely worn out." },
+                    { front: "Stay in", back: "Stay home." },
+                    { front: "Watch a film", back: "See a movie." },
+                    { front: "Good idea", back: "Wise suggestion." }
+                ]
+            },
+            {
+                id: 4,
+                title: "Track 4: The Missing Keys",
+                audioUrl: "https://actions.google.com/sounds/v1/household/key_Jingle.ogg",
+                subtitle: "Everyday Conversations — B2/C1[cite: 7]",
+                questions: [
+                    { q: "1. How long did Alice spend looking for her keys?", options: ["A) 5 minutes", "B) 10 minutes", "C) About 20 minutes", "D) An hour"], answer: "C" },
+                    { q: "2. When did this search take place?", options: ["A) Last night", "B) This morning", "C) Yesterday afternoon", "D) Last week"], answer: "B" },
+                    { q: "3. Where did Alice check for the keys?", options: ["A) In the car", "B) Bag, coat, and kitchen cupboards", "C) Under the bed", "D) In the office"], answer: "B" },
+                    { q: "4. Where were Alice's keys actually found?", options: ["A) On the table", "B) In her hand", "C) In the fridge", "D) On the floor"], answer: "B" },
+                    { q: "5. What tone does Alice use to describe the situation?", options: ["A) Terrifying", "B) Humorous/Surprising", "C) Formal", "D) Angry"], answer: "B" }
+                ],
+                transcript: "You're not going to believe this, but I spent about 20 minutes looking for my keys this morning. I checked my bag, my coat, and even the kitchen cupboards. Do you know where they were? In my hand.",
+                keyTerms: [
+                    { word: "not going to believe", definition: "Introducing surprise." },
+                    { word: "spent", definition: "Used time." },
+                    { word: "20 minutes", definition: "Time duration." },
+                    { word: "looking for", definition: "Searching." },
+                    { word: "this morning", definition: "Early daytime hours." },
+                    { word: "checked", definition: "Inspected." },
+                    { word: "bag", definition: "Carrying accessory." },
+                    { word: "coat", definition: "Outerwear." },
+                    { word: "kitchen cupboards", definition: "Food storage units." },
+                    { word: "in my hand", definition: "Held by hand." }
+                ],
+                flashcards: [
+                    { front: "Not going to believe", back: "Introducing surprise." },
+                    { front: "Spent", back: "Used time." },
+                    { front: "20 minutes", back: "Time duration." },
+                    { front: "Looking for", back: "Searching." },
+                    { front: "This morning", back: "Early daytime hours." },
+                    { front: "Checked", back: "Inspected." },
+                    { front: "Bag", back: "Carrying accessory." },
+                    { front: "Coat", back: "Outerwear." },
+                    { front: "Kitchen cupboards", back: "Food storage units." },
+                    { front: "In my hand", back: "Held by hand." }
+                ]
+            },
+            {
+                id: 5,
+                title: "Track 5: A Healthy Diet",
+                audioUrl: "https://actions.google.com/sounds/v1/food/cutlery_clatter.ogg",
+                subtitle: "Everyday Conversations — B2[cite: 8]",
+                questions: [
+                    { q: "1. What is Alice trying to do at the moment?", options: ["A) Sleep more", "B) Eat a bit better", "C) Exercise daily", "D) Drink less coffee"], answer: "B" },
+                    { q: "2. How does Alice describe the goal?", options: ["A) Easy and quick", "B) Easier said than done", "C) Impossible", "D) Expensive"], answer: "B" },
+                    { q: "3. What craving usually happens an hour after Alice's healthy dinner?", options: ["A) Fruit", "B) Chocolate", "C) Crisps", "D) Ice cream"], answer: "B" },
+                    { q: "4. What concept does Alice mention is important?", options: ["A) Balance", "B) Strict dieting", "C) Fasting", "D) Calorie counting"], answer: "A" },
+                    { q: "5. What does Alice ask the listener?", options: ["A) What is your favorite food?", "B) How do you manage to keep a balanced diet?", "C) Do you like chocolate?", "D) Do you cook dinner?"], answer: "B" }
+                ],
+                transcript: "I'm trying to eat a bit better at the moment, but it's easier said than done. I'll make something healthy for dinner and then an hour later I'll really want to have some chocolate. It's all about balance, isn't it? What about you, how do you manage to keep a balanced diet? It's not that easy, is it?",
+                keyTerms: [
+                    { word: "trying", definition: "Attempting." },
+                    { word: "eat a bit better", definition: "Improve diet." },
+                    { word: "at the moment", definition: "Currently." },
+                    { word: "easier said than done", definition: "Hard in practice." },
+                    { word: "healthy", definition: "Nutritious." },
+                    { word: "dinner", definition: "Evening meal." },
+                    { word: "chocolate", definition: "Sweet confection." },
+                    { word: "balance", definition: "Proportional stability." },
+                    { word: "manage", definition: "Succeed in doing." },
+                    { word: "balanced diet", definition: "Healthy food intake." }
+                ],
+                flashcards: [
+                    { front: "Trying", back: "Attempting." },
+                    { front: "Eat a bit better", back: "Improve diet." },
+                    { front: "At the moment", back: "Currently." },
+                    { front: "Easier said than done", back: "Hard in practice." },
+                    { front: "Healthy", back: "Nutritious." },
+                    { front: "Dinner", back: "Evening meal." },
+                    { front: "Chocolate", back: "Sweet confection." },
+                    { front: "Balance", back: "Proportional stability." },
+                    { front: "Manage", back: "Succeed in doing." },
+                    { front: "Balanced diet", back: "Healthy food intake." }
+                ]
+            },
+            {
+                id: 6,
+                title: "Track 6: True Story – 4 AM Flight",
+                audioUrl: "https://actions.google.com/sounds/v1/transportation/airplane_propeller.ogg",
+                subtitle: "Extended True Stories — C1/C1+[cite: 9]",
+                questions: [
+                    { q: "1. Where was Alice planning to visit?", options: ["A) Vienna", "B) Budapest", "C) Manchester", "D) Prague"], answer: "B" },
+                    { q: "2. Why did Alice and Richie nearly miss their outbound flight?", options: ["A) Their car broke down", "B) Their alarm didn't go off", "C) They went to the wrong airport", "D) They lost their passports"], answer: "B" },
+                    { q: "3. How did Alice drive to the airport?", options: ["A) Slowly and carefully", "B) Putting her foot down in her Fiat 500", "C) Taking a bus", "D) In a taxi"], answer: "B" },
+                    { q: "4. Where were they sitting when Alice lost track of time on the way back?", options: ["A) Starbucks", "B) Burger King", "C) Duty-free shop", "D) Boarding gate"], answer: "B" },
+                    { q: "5. Did they miss their flight home in the end?", options: ["A) Yes, they stayed overnight", "B) No, they made it with seconds to spare", "C) Yes, they took a different airline", "D) No, the flight was delayed"], answer: "B" }
+                ],
+                transcript: "The holiday we nearly missed and the flight we missed again. This is a true story of the first time I was going to visit Budapest with Richie, quite a few years ago now. We were living in Lancaster at the time and I was really excited because I was going to finally see Budapest and his hometown and meet some of his wider family for the first time. Our flight was about 6 o'clock in the morning, which meant we needed to be at the airport just about after four, and drive there, get there. The airport was roughly an hour away so we'd have to get up pretty early and prepare, shower, pack, breakfast, everything. But you know what, I'm organized, it's all good. We'd packed our cases the night before, set the alarm, gone to bed. Everything seemed really organized, but unfortunately the alarm didn't go off in the morning, or perhaps we just didn't hear it, I don't know. The next thing I remember is Richie suddenly waking me up and saying 'Alice, it's 4am!'. And for a few seconds I didn't understand what he meant. Then I realized that 4 o'clock wasn't the time we were supposed to wake up, it was the time we were supposed to be arriving at the airport! So we jumped out of bed, got dressed, we couldn't even brush our teeth or eat breakfast or grab our cases properly, we just had to go, and manage to leave the house within about 10 minutes. I don't know how, but we did. I drove my little Fiat 500 and I had to admit that I really had to put my foot down on the motorway. At one point I was doing about 80 miles per hour on a 70 zone. Yeah, wild, which was terrible and definitely not something I'd recommend. We eventually made it, we got to Budapest, met Richie's family and had an amazing trip overall. But on the way back, waiting in Budapest Airport for our flight home to Manchester, we were sitting in Burger King at the airport, eating, chatting, talking about the amazing things we'd seen and how much I loved Budapest, and we were that busy and deep in conversation that we completely lost track of time and suddenly we realized that our flight was boarding, our names were being called and our gate was on the other side of the airport! Honestly, this is a totally true story. So we grabbed our things and started running. We had to hurry through the airport, get through passport control and race all the way to the gate. Once again we were convinced we were going to miss our flight, but this time, however, we made it with seconds to spare, the very last people to get on the plane, receiving some dirty looks from the other passengers. Overall, thinking back, we missed the flight there and almost missed the flight home. Stressful, exhausting, expensive, but overall a really, really good holiday and experience. And believe it or not, we've really learned from our mistakes and we've not missed another flight since.",
+                keyTerms: [
+                    { word: "holiday", definition: "Trip away from home." },
+                    { word: "flight", definition: "Airplane journey." },
+                    { word: "excited", definition: "Eager and thrilled." },
+                    { word: "airport", definition: "Aviation terminal." },
+                    { word: "alarm", definition: "Wake-up device." },
+                    { word: "waking me up", definition: "Stopping sleep." },
+                    { word: "put my foot down", definition: "Drive faster." },
+                    { word: "lost track of time", definition: "Forgot the time." },
+                    { word: "boarding", definition: "Entering plane." },
+                    { word: "mistakes", definition: "Errors made." }
+                ],
+                flashcards: [
+                    { front: "Holiday", back: "Trip away from home." },
+                    { front: "Flight", back: "Airplane journey." },
+                    { front: "Excited", back: "Eager and thrilled." },
+                    { front: "Airport", back: "Aviation terminal." },
+                    { front: "Alarm", back: "Wake-up device." },
+                    { front: "Waking me up", back: "Stopping sleep." },
+                    { front: "Put my foot down", back: "Drive faster." },
+                    { front: "Lost track of time", back: "Forgot the time." },
+                    { front: "Boarding", back: "Entering plane." },
+                    { front: "Mistakes", back: "Errors made." }
+                ]
+            }
+        ];
+
+        let currentTrackId = 1;
+        let isTranscriptTestMode = false;
+        let currentCardIndex = 0;
+        let currentQuestionIndex = 0;
+        let shuffledFlashcards = [];
+        let userAnswers = {};
+
+        function initTrackState(track) {
+            shuffledFlashcards = [...track.flashcards].sort(() => Math.random() - 0.5);
+            currentCardIndex = 0;
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            isTranscriptTestMode = false;
+        }
+
+        function showLandingPage() {
+            document.getElementById('landingView').classList.remove('hidden');
+            document.getElementById('studioView').classList.add('hidden');
+        }
+
+        function enterStudio() {
+            document.getElementById('landingView').classList.add('hidden');
+            document.getElementById('studioView').classList.remove('hidden');
+            const trackObj = tracks.find(tr => tr.id === currentTrackId);
+            initTrackState(trackObj);
+            renderListeningApp();
+        }
+
+        function renderListeningApp() {
+            const trackSelector = document.getElementById('trackSelectorContainer');
+            trackSelector.innerHTML = '';
+
+            tracks.forEach(t => {
+                const isSelected = t.id === currentTrackId;
+                const btn = document.createElement('button');
+                btn.className = `px-4 py-2.5 rounded-2xl font-bold text-base transition shadow-sm ${isSelected ? 'bg-brandTeal text-white shadow-md' : 'bg-white text-brandDark border border-emerald-100 hover:bg-emerald-50'}`;
+                btn.innerText = t.title;
+                btn.onclick = () => { 
+                    currentTrackId = t.id; 
+                    const trackObj = tracks.find(tr => tr.id === currentTrackId);
+                    initTrackState(trackObj);
+                    renderListeningApp(); 
+                };
+                trackSelector.appendChild(btn);
+            });
+
+            const track = tracks.find(t => t.id === currentTrackId);
+            if (shuffledFlashcards.length === 0) {
+                initTrackState(track);
+            }
+
+            const workspace = document.getElementById('trackWorkspace');
+            const q = track.questions[currentQuestionIndex];
+
+            workspace.innerHTML = `
+                <div class="border-b border-emerald-100 pb-6">
+                    <span class="text-xs uppercase tracking-widest bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-full">${track.subtitle}</span>
+                    <h2 class="text-3xl font-bold text-brandDark mt-3 mb-4">${track.title}</h2>
+                    
+                    <!-- Audio Player -->
+                    <div class="bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100">
+                        <audio controls preload="auto" class="w-full accent-teal-500">
+                            <source src="${track.audioUrl}" type="audio/mp4">
+                            <source src="${track.audioUrl}" type="audio/ogg">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+                </div>
+
+                <!-- One Comprehension Question at a Time Carousel -->
+                <div class="bg-emerald-50/30 border border-emerald-200 p-6 rounded-3xl space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-2xl font-bold text-brandDark">❓ Comprehension Question (<span id="qCounter">${currentQuestionIndex + 1}</span> of ${track.questions.length})</h3>
+                        <button onclick="checkFinalQuizScore()" class="bg-brandTeal hover:bg-teal-500 text-white font-bold px-4 py-2 rounded-xl text-sm shadow-sm">Check Quiz Score</button>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl border border-emerald-100 space-y-4">
+                        <p class="font-bold text-xl text-brandDark">${q.q}</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            ${q.options.map((opt) => {
+                                const optLetter = opt[0];
+                                const isChecked = userAnswers[currentQuestionIndex] === optLetter ? 'checked' : '';
+                                return `
+                                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl border border-emerald-100 hover:bg-emerald-50 transition">
+                                        <input type="radio" name="current_q" value="${optLetter}" onclick="saveAnswer(${currentQuestionIndex}, '${optLetter}')" ${isChecked} class="accent-brandTeal w-5 h-5">
+                                        <span class="text-gray-700 text-lg font-medium">${opt}</span>
+                                    </label>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2">
+                        <button onclick="prevQuestion()" class="bg-white border-2 border-brandTeal text-brandTeal hover:bg-emerald-50 font-bold px-5 py-2 rounded-xl text-lg shadow-sm">← Previous Question</button>
+                        <button onclick="nextQuestion()" class="bg-brandTeal hover:bg-teal-500 text-white font-bold px-5 py-2 rounded-xl text-lg shadow-sm">Next Question →</button>
+                    </div>
+                    <div id="quizFeedback" class="text-lg font-bold"></div>
+                </div>
+
+                <!-- Transcript / Test Mode Workspace -->
+                <div class="space-y-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <h3 class="text-2xl font-bold text-brandDark">${isTranscriptTestMode ? '✍️ Transcript Gap-Filling Test' : '📜 Full Transcript & Key Words'}</h3>
+                        <div class="flex items-center gap-2">
+                            <button onclick="toggleTranscriptTestMode()" class="px-4 py-2 rounded-xl font-bold text-base border-2 ${isTranscriptTestMode ? 'bg-amber-100 border-amber-300 text-amber-900' : 'bg-emerald-50 border-emerald-300 text-emerald-800'} transition shadow-sm">
+                                ${isTranscriptTestMode ? '📖 View Normal Transcript' : '✍️ Turn into Test Mode'}
+                            </button>
+                            ${isTranscriptTestMode ? `
+                                <button onclick="checkTestAnswers()" class="bg-brandTeal hover:bg-teal-500 text-white font-bold px-4 py-2 rounded-xl text-base shadow-sm">Check</button>
+                                <button onclick="revealTestAnswers()" class="bg-white border-2 border-brandTeal text-brandTeal hover:bg-emerald-50 font-bold px-4 py-2 rounded-xl text-base">Reveal</button>
+                                <button onclick="resetTest()" class="bg-gray-100 text-gray-700 font-bold px-4 py-2 rounded-xl text-base">Reset</button>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <div class="p-6 bg-cream/60 border border-emerald-100 rounded-2xl text-lg leading-relaxed text-gray-800 max-h-[500px] overflow-y-auto">
+                        ${isTranscriptTestMode ? renderTestTranscript(track) : renderReadingTranscript(track)}
+                    </div>
+                    <div id="testFeedback" class="text-lg font-bold"></div>
+                </div>
+
+                <!-- Proportionate Flashcard Carousel Section with Reset & Shuffle -->
+                <div class="bg-emerald-50/40 border border-emerald-200 p-6 rounded-3xl space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-2xl font-bold text-brandDark">🗂️ Flashcards (<span id="cardCounter">${currentCardIndex + 1}</span>/${shuffledFlashcards.length})</h3>
+                        <button onclick="resetAndShuffleFlashcards()" class="bg-white border border-emerald-300 text-emerald-800 font-bold px-3 py-1.5 rounded-xl hover:bg-emerald-50 text-sm shadow-sm">🔄 Reset & Shuffle</button>
+                    </div>
+
+                    <div class="flex justify-center">
+                        <div id="flashcardBox" onclick="flipCurrentCard(this)" class="bg-white border-2 border-emerald-200 p-6 rounded-3xl cursor-pointer hover:shadow-lg transition text-center w-full max-w-xs min-h-[150px] flex flex-col justify-center items-center shadow-sm">
+                            <span class="text-xs text-emerald-600 font-bold uppercase mb-2">Click card to flip</span>
+                            <p id="cardFrontText" class="text-2xl font-bold text-brandDark">${shuffledFlashcards[currentCardIndex].front}</p>
+                            <p id="cardBackText" class="text-2xl font-medium text-teal-700 hidden">${shuffledFlashcards[currentCardIndex].back}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center items-center gap-4 pt-2">
+                        <button onclick="prevCard()" class="bg-white border-2 border-brandTeal text-brandTeal hover:bg-emerald-50 font-bold px-6 py-2 rounded-2xl text-lg shadow-sm">← Previous</button>
+                        <button onclick="nextCard()" class="bg-brandTeal hover:bg-teal-500 text-white font-bold px-6 py-2 rounded-2xl text-lg shadow-sm">Next →</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveAnswer(qIdx, optionLetter) {
+            userAnswers[qIdx] = optionLetter;
+        }
+
+        function nextQuestion() {
+            const track = tracks.find(t => t.id === currentTrackId);
+            currentQuestionIndex = (currentQuestionIndex + 1) % track.questions.length;
+            renderListeningApp();
+        }
+
+        function prevQuestion() {
+            const track = tracks.find(t => t.id === currentTrackId);
+            currentQuestionIndex = (currentQuestionIndex - 1 + track.questions.length) % track.questions.length;
+            renderListeningApp();
+        }
+
+        function checkFinalQuizScore() {
+            const track = tracks.find(t => t.id === currentTrackId);
+            let score = 0;
+            track.questions.forEach((qObj, idx) => {
+                if (userAnswers[idx] === qObj.answer) {
+                    score++;
+                }
+            });
+            document.getElementById('quizFeedback').innerHTML = `<span class='text-emerald-700'>🎯 Alice says your total quiz score is ${score} out of ${track.questions.length} correct!</span>`;
+        }
+
+        let isCardFlipped = false;
+        function flipCurrentCard(elem) {
+            isCardFlipped = !isCardFlipped;
+            const front = document.getElementById('cardFrontText');
+            const back = document.getElementById('cardBackText');
+            front.classList.toggle('hidden');
+            back.classList.toggle('hidden');
+        }
+
+        function updateCardDisplay() {
+            isCardFlipped = false;
+            const card = shuffledFlashcards[currentCardIndex];
+            document.getElementById('cardFrontText').innerText = card.front;
+            document.getElementById('cardBackText').innerText = card.back;
+            document.getElementById('cardFrontText').classList.remove('hidden');
+            document.getElementById('cardBackText').classList.add('hidden');
+            document.getElementById('cardCounter').innerText = currentCardIndex + 1;
+        }
+
+        function nextCard() {
+            currentCardIndex = (currentCardIndex + 1) % shuffledFlashcards.length;
+            updateCardDisplay();
+        }
+
+        function prevCard() {
+            currentCardIndex = (currentCardIndex - 1 + shuffledFlashcards.length) % shuffledFlashcards.length;
+            updateCardDisplay();
+        }
+
+        function resetAndShuffleFlashcards() {
+            const track = tracks.find(t => t.id === currentTrackId);
+            initTrackState(track);
+            renderListeningApp();
+        }
+
+        function toggleTranscriptTestMode() {
+            isTranscriptTestMode = !isTranscriptTestMode;
+            renderListeningApp();
+        }
+
+        function renderReadingTranscript(track) {
+            let text = track.transcript;
+            track.keyTerms.forEach(kt => {
+                const regex = new RegExp(`(${kt.word})`, 'gi');
+                text = text.replace(regex, `<span class="bg-teal-100 text-teal-900 px-2 py-0.5 rounded-lg font-bold border border-teal-200" title="${kt.definition}">$1</span>`);
+            });
+            return text;
+        }
+
+        function renderTestTranscript(track) {
+            let text = track.transcript;
+            track.keyTerms.forEach(kt => {
+                const regex = new RegExp(`(${kt.word})`, 'gi');
+                const inputHtml = `<span class="inline-flex items-center mx-1 align-middle"><input type="text" data-answer="${kt.word}" class="gap-input px-2 py-0.5 bg-white border-2 border-emerald-300 rounded-xl text-lg w-36 text-center font-bold focus:outline-none focus:border-brandTeal" placeholder="[ ____ ]"></span>`;
+                text = text.replace(regex, inputHtml);
+            });
+            return text;
+        }
+
+        function checkTestAnswers() {
+            const inputs = document.querySelectorAll('.gap-input');
+            let allCorrect = true;
+            inputs.forEach(inp => {
+                const userVal = inp.value.trim().toLowerCase();
+                const correctVal = inp.getAttribute('data-answer').toLowerCase();
+                if (userVal === correctVal) {
+                    inp.style.borderColor = '#10B981';
+                    inp.style.backgroundColor = '#ECFDF5';
+                } else {
+                    inp.style.borderColor = '#EF4444';
+                    inp.style.backgroundColor = '#FEF2F2';
+                    allCorrect = false;
+                }
+            });
+            const feedback = document.getElementById('testFeedback');
+            if (allCorrect) {
+                feedback.innerHTML = "<span class='text-emerald-600'>🎉 Excellent! All gap answers are correct!</span>";
+            } else {
+                feedback.innerHTML = "<span class='text-red-500'>⚠️ Some answers are incorrect. Review highlighted fields and try again.</span>";
+            }
+        }
+
+        function revealTestAnswers() {
+            const inputs = document.querySelectorAll('.gap-input');
+            inputs.forEach(inp => {
+                inp.value = inp.getAttribute('data-answer');
+                inp.style.borderColor = '#3B82F6';
+                inp.style.backgroundColor = '#EFF6FF';
+            });
+            document.getElementById('testFeedback').innerHTML = "<span class='text-blue-600'>💡 Answers revealed!</span>";
+        }
+
+        function resetTest() {
+            renderListeningApp();
+        }
+
+        // Start on landing view by default
+        showLandingPage();
+    </script>
+</body>
+</html>
